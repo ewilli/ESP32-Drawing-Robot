@@ -1,5 +1,17 @@
 #pragma once
 
+#ifndef GPIO_LIFT
+#define GPIO_LIFT 1
+#endif
+
+#ifndef GPIO_LEFT
+#define GPIO_LEFT 2
+#endif
+
+#ifndef GPIO_RIGHT
+#define GPIO_RIGHT 3
+#endif
+
 #include <Arduino.h>
 #include <types.h>
 
@@ -30,9 +42,9 @@ const float DEFAULT_SPEED = 100; // Velocity of the pen mm/s
 const float MAX_DELTA = 0.1;
 
 // Servo pins
-static const int liftServoPin = GPIO_NUM_0;
-static const int servoLeftPin = GPIO_NUM_2;
-static const int servoRightPin = GPIO_NUM_1;
+static const int liftServoPin = GPIO_LIFT;
+static const int servoLeftPin = GPIO_LEFT;
+static const int servoRightPin = GPIO_RIGHT;
 
 // Local domain name (mDNS hostname)
-const char* LOCAL_DOMAIN = "draw.local";
+//const char* MY_LOCAL_DOMAIN = "draw.local";

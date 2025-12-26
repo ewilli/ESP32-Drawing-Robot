@@ -8,14 +8,17 @@ GCodeLine parseGCodeLine(const String &line)
     char lineBuffer[line.length() + 1];
     line.toCharArray(lineBuffer, line.length() + 1);
 
-    char* token = strtok(lineBuffer, " ");
-    if (token != nullptr) {
+    char *token = strtok(lineBuffer, " ");
+    if (token != nullptr)
+    {
         gcode.cmd = token;
     }
 
-    while ((token = strtok(nullptr, " ")) != nullptr) {
+    while ((token = strtok(nullptr, " ")) != nullptr)
+    {
         String param(token);
-        if (param.length() > 1) {
+        if (param.length() > 1)
+        {
             String key = param.substring(0, 1);
             String valueStr = param.substring(1);
             gcode.params[key] = valueStr.toFloat();
@@ -36,7 +39,8 @@ void executeLine(GCodeLine &gline)
         Serial.printf("G1: Linear move to X: %.2f, Y: %.2f\n", pos.x, pos.y);
         linearMove(pos);
     }
-    else if(gline.cmd == "G2" || gline.cmd == "G3") {
+    else if (gline.cmd == "G2" || gline.cmd == "G3")
+    {
         Position center;
         center.x = gline.params["I"];
         center.y = gline.params["J"];
@@ -47,7 +51,9 @@ void executeLine(GCodeLine &gline)
 
         bool clockwise = gline.cmd == "G2";
 
-        Serial.printf("%s: Arc move to X: %.2f, Y: %.2f, I: %.2f, J: %.2f\n", gline.cmd, end.x, end.y, center.x, center.y);
+        char arr[gline.cmd.length() + 1];
+        strcpy(arr, gline.cmd.c_str());
+        Serial.printf("%s: Arc move to X: %.2f, Y: %.2f, I: %.2f, J: %.2f\n", arr, end.x, end.y, center.x, center.y);
         arcMove(center, clockwise, &end);
     }
     else if (gline.cmd == "G28")
@@ -65,16 +71,19 @@ void executeLine(GCodeLine &gline)
         Serial.println("M5: Raise tool");
         enableTool(false);
     }
-    else if (gline.cmd == "M999") {
+    else if (gline.cmd == "M999")
+    {
         Serial.println("M999: Restarting ESP...");
         ESP.restart();
     }
-    else if(gline.cmd == "M203") {
+    else if (gline.cmd == "M203")
+    {
         float newSpeed = gline.params["X"];
         Serial.printf("M203: Setting speed to %.2f\n", newSpeed);
         setSpeed(newSpeed);
     }
-    else {
+    else
+    {
         Serial.printf("Unknown command: %s\n", gline.cmd.c_str());
     }
 }

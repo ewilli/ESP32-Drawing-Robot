@@ -1,5 +1,15 @@
 #include <helpers.h>
 
+
+#ifndef MIN_PULSE_WIDTH
+#define MIN_PULSE_WIDTH 0
+#endif
+
+#ifndef MAX_PULSE_WIDTH
+#define MAX_PULSE_WIDTH 2000
+#endif
+
+
 struct Arc
 {
     Position center;
@@ -18,7 +28,7 @@ Position currentPosition = HOMING_POSITION;
 // Targets
 Position *linearTargetPosition = nullptr;
 Arc *arcTarget = nullptr;
-int delayUntil;
+unsigned long delayUntil;
 
 // Last update time
 int lastUpdate;
@@ -173,7 +183,7 @@ void updateArcMove(float delta)
 
 void updateToolPosition()
 {
-    int currentTime = millis();
+    unsigned long currentTime = millis();
     float delta = (currentTime - lastUpdate) / 1000.0;
     lastUpdate = currentTime;
 

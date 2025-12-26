@@ -1,9 +1,14 @@
 #include <Arduino.h>
-#include <WiFiManager.h>
+#if defined(ESP8266)
+#include <ESP8266WiFi.h> 
+#else
+#include <WiFi.h>
+#endif
+
+#include <ESPAsyncWiFiManager.h>  
 #include <ESPAsyncWebServer.h>
 #include <AsyncJson.h>
 #include <ArduinoJson.h>
-#include <ESPmDNS.h>
 
 // Own libraries
 #include <config.h>
@@ -11,6 +16,10 @@
 
 // Website
 #include <web/index_gz.h>
+
+#define GPIO_LIFT 1
+#define GPIO_LEFT 2
+#define GPIO_RIGHT 3
 
 // WiFi and server setup
 AsyncWebServer server(80);
@@ -25,9 +34,10 @@ void setup()
 
   // Initialize WiFi
   Serial.println("Connecting to WiFi...");
-  WiFiManager wifiManager;
-  wifiManager.setConnectRetries(5);
-  wifiManager.setWiFiAutoReconnect(true);
+  AsyncWebServer server(80);
+  DNSServer dns;
+  AsyncWiFiManager wifiManager(&server,&dns);
+
   wifiManager.setConnectTimeout(10);
   WiFi.setSleep(WIFI_PS_NONE);
   wifiManager.autoConnect();
@@ -35,15 +45,6 @@ void setup()
   Serial.println("\nWiFi connected.");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
-  // Initialize mDNS with local domain
-  if (MDNS.begin(LOCAL_DOMAIN)) {
-    Serial.print("mDNS responder started. Access device at: http://");
-    Serial.print(LOCAL_DOMAIN);
-    Serial.println("/");
-  } else {
-    Serial.println("Error setting up mDNS responder!");
-  }
 
   Serial.println("Homing XY.");
   homeXY();
@@ -102,7 +103,7 @@ void setup()
 
       JsonDocument doc;
 
-      Position pos = getCurrentPosition();
+      //Position pos = getCurrentPosition();
       doc["minX"] = MIN_X;
       doc["maxX"] = MAX_X;
       doc["minY"] = MIN_Y;
